@@ -1,0 +1,20 @@
+{% extends "main/base.html" %}
+
+{% block title %}{{ feature.title }} — PromptBase{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <a class="muted" href="{% url 'main:home' %}">← Назад на главную</a>
+    <h1>{{ feature.title }}</h1>
+    <p class="subtitle">{{ feature.lead }}</p>
+</section>
+
+<section class="detail-panel">
+    <h2>Полное описание</h2>
+    <p class="muted">{{ feature.full_description }}</p>
+    <div class="search-wrap">
+        <a class="btn" href="{% url 'main:tool_list' %}">Перейти в каталог</a>
+        <a class="btn" href="{% url 'main:custom_bot_request' %}">Заказать кастом-бота</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "main/base.html" %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Личный кабинет</h1>
+    <p class="subtitle">Здесь ваши доступы, покупки и избранные инструменты.</p>
+</section>
+
+<section class="detail-panel" style="margin-bottom: 18px;">
+    <h2>Авторский кабинет</h2>
+    {% if author_profile %}
+        <p class="meta">Статус автора: {{ author_profile.get_status_display }} | Доля автора: {{ author_profile.revenue_share_percent }}%</p>
+        <p class="meta">Оплаченных продаж ваших инструментов: {{ author_sales_count }}</p>
+        <p style="margin: 14px 0;">
+            <a class="btn" href="{% url 'main:author_tool_create' %}">Добавить AI-инструмент</a>
+        </p>
+
+        <h3>Мои инструменты</h3>
+        {% for tool in authored_tools %}
+            <article class="card" style="margin-bottom: 10px;">
+                <div class="tag">{{ tool.get_publication_status_display }}</div>
+                <h3>{{ tool.title }}</h3>
+                <p class="muted">{{ tool.short_description }}</p>
+                <p class="meta">Категория: {{ tool.category.name }} | Цена: ${{ tool.price_usd }}</p>
+                <a class="btn" href="{% url 'main:tool_detail' tool.pk %}">Открыть</a>
+            </article>
+        {% empty %}
+            <div class="empty">Вы уже автор. Добавьте первый инструмент и отправьте его на модерацию.</div>
+        {% endfor %}
+    {% else %}
+        <p class="muted">После принятия заявки здесь появятся ваши инструменты, статусы модерации и продажи.</p>
+        <a class="btn" href="{% url 'main:author_apply' %}">Стать автором</a>
+    {% endif %}
+
+    {% if author_applications %}
+        <h3 style="margin-top: 18px;">Мои заявки</h3>
+        {% for application in author_applications %}
+            <p class="meta">
+                {{ application.created_at|date:"d.m.Y H:i" }} |
+                {{ application.tool_title }} |
+                {{ application.get_status_display }}
+                {% if application.admin_comment %}| {{ application.admin_comment }}{% endif %}
+            </p>
+        {% endfor %}
+    {% endif %}
+</section>
+
+<section class="detail-panel">
+    <h2>Купленные инструменты</h2>
+    {% for access in accesses %}
+        <article class="card" style="margin-bottom: 10px;">
+            <h3>{{ access.tool.title }}</h3>
+            <p class="meta">Доступ открыт: {{ access.granted_at|date:"d.m.Y H:i" }}</p>
+            <a class="btn" href="{% url 'main:tool_detail' access.tool.pk %}">Открыть карточку</a>
+        </article>
+    {% empty %}
+        <div class="empty">Пока нет доступов. Откройте каталог и купите первый инструмент.</div>
+    {% endfor %}
+</section>
+
+<section class="detail-panel" style="margin-top: 18px;">
+    <h2>История покупок</h2>
+    {% for purchase in purchases %}
+        <p class="meta">
+            #{{ purchase.id }} | {{ purchase.created_at|date:"d.m.Y H:i" }} |
+            {% if purchase.tool %}{{ purchase.tool.title }}{% endif %}
+            {% if purchase.plan %}{{ purchase.plan.name }}{% endif %}
+            | ${{ purchase.amount_usd }}
+        </p>
+    {% empty %}
+        <div class="empty">История покупок появится после первой оплаты.</div>
+    {% endfor %}
+</section>
+
+<section class="detail-panel" style="margin-top: 18px;">
+    <h2>Избранное</h2>
+    {% for favorite in favorites %}
+        <article class="card" style="margin-bottom: 10px;">
+            <h3>{{ favorite.tool.title }}</h3>
+            <p class="muted">{{ favorite.tool.short_description }}</p>
+            <a class="btn" href="{% url 'main:tool_detail' favorite.tool.pk %}">Перейти</a>
+        </article>
+    {% empty %}
+        <div class="empty">Пока нет избранных инструментов.</div>
+    {% endfor %}
+</section>
+{% endblock %}

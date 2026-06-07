@@ -1,0 +1,70 @@
+{% extends "main/base.html" %}
+
+{% block title %}{{ tool.title }}{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <a class="muted" href="{% url 'main:tool_list' %}">← Назад к каталогу</a>
+    <h1>{{ tool.title }}</h1>
+    <p class="tag">{{ tool.category.name }}</p>
+    <p class="subtitle">{{ tool.problem_solved|default:tool.short_description }}</p>
+</section>
+
+<section class="detail-panel">
+    <p class="meta">Для: {{ tool.get_audience_display }} | Сложность: {{ tool.get_difficulty_display }}</p>
+    <p class="meta">Тип продукта: {{ tool.get_product_type_display }}</p>
+    <p class="meta">Экономия: {{ tool.time_saving_hours }} ч/нед | Запуск: {{ tool.setup_minutes }} мин | Цена: ${{ tool.price_usd }}</p>
+
+    <p style="display:flex; gap: 10px; flex-wrap:wrap; margin: 14px 0;">
+        <a class="btn" href="{% url 'main:create_tool_purchase' tool.pk %}">Купить доступ</a>
+        <a class="btn" href="{% url 'main:toggle_favorite' tool.pk %}">
+            {% if is_favorite %}Убрать из избранного{% else %}В избранное{% endif %}
+        </a>
+    </p>
+    {% if has_access and tool.prompt_text %}
+        <p class="meta">У вас есть доступ: можно копировать промпт и использовать в работе.</p>
+    {% endif %}
+
+    <h2>Описание</h2>
+    <p class="muted">{{ tool.full_description|linebreaks }}</p>
+
+    {% if tool.demo_input or tool.demo_output %}
+        <h2>Demo до/после</h2>
+        {% if tool.demo_input %}
+            <p class="meta">До (вход):</p>
+            <div class="prompt-box">{{ tool.demo_input }}</div>
+        {% endif %}
+        {% if tool.demo_output %}
+            <p class="meta">После (результат):</p>
+            <div class="prompt-box">{{ tool.demo_output }}</div>
+        {% endif %}
+    {% endif %}
+
+    {% if tool.prompt_text %}
+        <h2>Готовый промпт</h2>
+        <div class="prompt-box">{{ tool.prompt_text }}</div>
+    {% endif %}
+
+    {% if tool.external_link %}
+        <p style="margin-top: 18px;">
+            <a class="btn" href="{{ tool.external_link }}" target="_blank" rel="noopener">Перейти к сервису</a>
+        </p>
+    {% endif %}
+</section>
+
+<section style="margin-top: 18px;" class="detail-panel">
+    <h2>Отзывы и кейсы</h2>
+    {% if reviews %}
+        {% for review in reviews %}
+            <article class="card" style="margin-bottom: 10px;">
+                <p><strong>{{ review.author_name }}</strong>{% if review.company %} — {{ review.company }}{% endif %}</p>
+                <p class="meta">Оценка: {{ review.rating }}/5</p>
+                {% if review.result_metric %}<p class="meta">Результат: {{ review.result_metric }}</p>{% endif %}
+                <p class="muted">{{ review.text }}</p>
+            </article>
+        {% endfor %}
+    {% else %}
+        <div class="empty">Пока нет отзывов, добавьте кейсы через админку.</div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "main/base.html" %}
+
+{% block title %}PromptBase — AI-инструменты для бизнеса{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>PromptBase — платформа AI-ассистентов для бизнеса</h1>
+    <p class="subtitle">
+        Готовые промпты, AI-агенты и мини-сервисы для маркетинга, HR, продаж и операционных процессов.
+        Запускайте решения за минуты и экономьте часы ручной работы каждую неделю.
+    </p>
+    <div class="search-wrap">
+        <a class="btn" href="{% url 'main:prompt_generator' %}">Сгенерировать промпт</a>
+        <a class="btn" href="{% url 'main:tool_list' %}">Открыть каталог</a>
+        <a class="btn" href="{% url 'main:pricing' %}">Смотреть тарифы</a>
+        <a class="btn" href="{% url 'main:custom_bot_request' %}">Заказать кастом-бота</a>
+    </div>
+</section>
+
+<section>
+    <h2>Почему PromptBase</h2>
+    <div class="tools-grid">
+        <a class="card-link" href="{% url 'main:feature_detail' 'quick-start' %}">
+            <article class="card">
+                <h3>Быстрый старт</h3>
+                <p class="muted">Готовые сценарии и шаблоны, которые можно внедрить сразу.</p>
+                <p class="meta">Нажмите, чтобы открыть полное описание</p>
+            </article>
+        </a>
+        <a class="card-link" href="{% url 'main:feature_detail' 'result-focus' %}">
+            <article class="card">
+                <h3>Фокус на результат</h3>
+                <p class="muted">Показываем ценность: экономия времени, скорость запуска, кейсы.</p>
+                <p class="meta">Нажмите, чтобы открыть полное описание</p>
+            </article>
+        </a>
+        <a class="card-link" href="{% url 'main:feature_detail' 'roles' %}">
+            <article class="card">
+                <h3>Для разных ролей</h3>
+                <p class="muted">SMM, HR, Sales, Operations и команды роста.</p>
+                <p class="meta">Нажмите, чтобы открыть полное описание</p>
+            </article>
+        </a>
+    </div>
+</section>
+
+{% if featured_tools %}
+<section style="margin-top: 24px;">
+    <h2>Популярные решения</h2>
+    <div class="tools-grid">
+        {% for tool in featured_tools %}
+            <article class="card">
+                <div class="tag">{{ tool.category.name }}</div>
+                <h3>{{ tool.title }}</h3>
+                <p class="muted">{{ tool.short_description }}</p>
+                <p class="meta">Экономия: {{ tool.time_saving_hours }} ч/нед | Цена: ${{ tool.price_usd }}</p>
+                <a class="btn" href="{% url 'main:tool_detail' tool.pk %}">Подробнее</a>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section style="margin-top: 24px;">
+    <h2>Категории</h2>
+    <div class="search-wrap">
+        {% for category in categories %}
+            <a class="btn" href="{% url 'main:solutions_landing' category.slug %}">
+                {% if category.icon_emoji %}{{ category.icon_emoji }} {% endif %}AI для {{ category.name }}
+            </a>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

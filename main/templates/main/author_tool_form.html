@@ -1,0 +1,25 @@
+{% extends "main/base.html" %}
+
+{% block title %}Добавить AI-инструмент{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Добавить AI-инструмент</h1>
+    <p class="subtitle">Заполните карточку инструмента. После отправки она попадет на модерацию и появится в каталоге только после публикации админом.</p>
+</section>
+
+<section class="detail-panel">
+    <form method="post" class="stack">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="row">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="muted">{{ field.help_text }}</small>{% endif %}
+                {% if field.errors %}<small class="muted">{{ field.errors|striptags }}</small>{% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Отправить на модерацию</button>
+    </form>
+</section>
+{% endblock %}

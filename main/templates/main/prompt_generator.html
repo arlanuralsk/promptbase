@@ -1,0 +1,53 @@
+{% extends "main/base.html" %}
+
+{% block title %}Генератор промптов{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Генератор промптов</h1>
+    <p class="subtitle">Опишите задачу, выберите роль и формат. Сайт соберет готовый промпт, который можно сразу использовать в ChatGPT, Claude, Gemini или другом AI-сервисе.</p>
+</section>
+
+<section class="tools-grid">
+    <article class="detail-panel">
+        <h2>Задача</h2>
+        <form method="post" class="stack">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="row">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}<small class="muted">{{ field.errors|striptags }}</small>{% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit">Сгенерировать промпт</button>
+        </form>
+    </article>
+
+    <article class="detail-panel">
+        <h2>Результат</h2>
+        {% if generated_prompt %}
+            <div class="tag">
+                {% if provider == "openai" %}AI-генерация{% else %}Шаблонная генерация{% endif %}
+            </div>
+            <div class="prompt-box">{{ generated_prompt }}</div>
+        {% else %}
+            <div class="empty">Заполните форму, и здесь появится готовый промпт.</div>
+        {% endif %}
+    </article>
+</section>
+
+<section class="detail-panel" style="margin-top: 24px;">
+    <h2>Последние генерации</h2>
+    {% for item in history %}
+        <article class="card" style="margin-bottom: 10px;">
+            <div class="tag">{{ item.category }}</div>
+            <h3>{{ item.task|truncatechars:80 }}</h3>
+            <p class="meta">{{ item.created_at|date:"d.m.Y H:i" }} | {{ item.provider }}</p>
+            <div class="prompt-box">{{ item.generated_prompt|truncatechars:500 }}</div>
+        </article>
+    {% empty %}
+        <div class="empty">История появится после первой генерации.</div>
+    {% endfor %}
+</section>
+{% endblock %}

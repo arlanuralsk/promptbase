@@ -1,0 +1,25 @@
+{% extends "main/base.html" %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Вход в личный кабинет</h1>
+</section>
+
+<section class="detail-panel">
+    <form method="post" class="stack">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="row">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<small class="muted">{{ field.errors|striptags }}</small>{% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Войти</button>
+        <input type="hidden" name="next" value="{{ next }}">
+        <p class="muted">Нет аккаунта? <a href="{% url 'main:signup' %}">Зарегистрироваться</a></p>
+    </form>
+</section>
+{% endblock %}

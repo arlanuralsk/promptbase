@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PromptBase{% endblock %}</title>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --panel: #131b34;
+            --card: #1a2547;
+            --text: #f3f6ff;
+            --muted: #b5c0e5;
+            --accent: #6d8cff;
+            --accent-2: #8b5cf6;
+        }
+        * { box-sizing: border-box; }
+        html {
+            background: var(--bg);
+            min-height: 100%;
+            overscroll-behavior-y: none;
+        }
+        body {
+            margin: 0;
+            font-family: Inter, Segoe UI, Arial, sans-serif;
+            background: radial-gradient(circle at top, #16224a, var(--bg));
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+            overscroll-behavior-y: none;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .hero {
+            padding: 40px 0 16px;
+        }
+        h1, h2, h3 { margin: 0 0 12px; }
+        .subtitle {
+            color: var(--muted);
+            max-width: 760px;
+            line-height: 1.5;
+        }
+        .search-wrap {
+            display: flex;
+            gap: 10px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"], textarea, select {
+            background: var(--panel);
+            border: 1px solid #31406f;
+            color: var(--text);
+            border-radius: 10px;
+            padding: 12px 14px;
+            min-width: 220px;
+            width: 100%;
+        }
+        textarea { min-height: 120px; resize: vertical; }
+        button, .btn {
+            border: 0;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+            border-radius: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+        .btn:hover, button:hover {
+            transform: translateY(-3px) scale(1.02);
+            filter: brightness(1.08);
+            box-shadow: 0 10px 20px rgba(109, 140, 255, 0.35);
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+            border: 1px solid #2f3f70;
+            border-radius: 14px;
+            padding: 18px;
+            transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+            transform: translateY(0);
+        }
+        .card:hover {
+            transform: translateY(-6px) scale(1.01);
+            border-color: #6d8cff;
+            box-shadow: 0 14px 28px rgba(22, 34, 74, 0.5), 0 0 0 1px rgba(109, 140, 255, 0.25);
+        }
+        .card-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+            cursor: pointer;
+        }
+        .card-link:hover .card {
+            transform: translateY(-6px) scale(1.01);
+            border-color: #4f6ecf;
+            box-shadow: 0 14px 28px rgba(22, 34, 74, 0.5), 0 0 0 1px rgba(109, 140, 255, 0.25);
+        }
+        .tag {
+            display: inline-block;
+            background: rgba(109, 140, 255, 0.2);
+            border: 1px solid rgba(109, 140, 255, 0.4);
+            color: #c9d5ff;
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .muted { color: var(--muted); }
+        .meta { margin-top: 8px; font-size: 13px; color: var(--muted); }
+        .detail-panel {
+            background: var(--panel);
+            border: 1px solid #324377;
+            border-radius: 14px;
+            padding: 20px;
+        }
+        .prompt-box {
+            background: #0f1731;
+            border: 1px solid #2d3d6f;
+            border-radius: 10px;
+            padding: 14px;
+            white-space: pre-wrap;
+            line-height: 1.45;
+            color: #dce4ff;
+        }
+        .empty {
+            margin-top: 16px;
+            color: var(--muted);
+            padding: 14px;
+            border: 1px dashed #3a4d86;
+            border-radius: 12px;
+        }
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding-top: 6px;
+        }
+        .logo {
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-decoration: none;
+            color: #fff;
+        }
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .notice {
+            margin: 14px 0;
+            padding: 10px 14px;
+            background: rgba(76, 175, 80, 0.18);
+            border: 1px solid rgba(76, 175, 80, 0.45);
+            border-radius: 10px;
+        }
+        .stack {
+            display: grid;
+            gap: 12px;
+            max-width: 760px;
+        }
+        .row {
+            display: grid;
+            gap: 8px;
+        }
+        .site-footer {
+            margin-top: 40px;
+            padding: 18px 0 8px;
+            border-top: 1px solid #2f3f70;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            color: var(--muted);
+            font-size: 14px;
+        }
+        .site-footer a {
+            color: #c9d5ff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-nav">
+            <a class="logo" href="{% url 'main:home' %}">PromptBase</a>
+            <div class="nav-links">
+                <a class="btn" href="{% url 'main:prompt_generator' %}">Генератор</a>
+                <a class="btn" href="{% url 'main:dashboard' %}">Кабинет</a>
+                <a class="btn" href="{% url 'main:author_apply' %}">Стать автором</a>
+                {% if request.user.is_authenticated %}
+                    <a class="btn" href="{% url 'logout' %}">Выйти</a>
+                {% else %}
+                    <a class="btn" href="{% url 'login' %}">Войти</a>
+                    <a class="btn" href="{% url 'main:signup' %}">Регистрация</a>
+                {% endif %}
+                <a class="btn" href="/admin/">Админка</a>
+            </div>
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="notice">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+        <footer class="site-footer">
+            <span>© {% now "Y" %} PromptBase</span>
+            <span>
+                <a href="{% url 'main:custom_bot_request' %}">Заказать внедрение</a> |
+                <a href="{% url 'main:author_apply' %}">Стать автором</a> |
+                <a href="/admin/">Контакты</a>
+            </span>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+{% extends "main/base.html" %}
+
+{% block title %}Тарифы{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Тарифы</h1>
+    <p class="subtitle">Выберите формат работы с AI-инструментами. Цены показаны в USD, KZT, RUB и EUR для удобства сравнения.</p>
+</section>
+
+<section>
+    <h2>Для покупателей</h2>
+    <div class="tools-grid">
+        <article class="card">
+            <div class="tag">Старт</div>
+            <h3>Free</h3>
+            <p class="muted">Для знакомства с каталогом и проверки первых AI-сценариев.</p>
+            <p class="meta">Цена: $0 / 0 ₸ / 0 ₽ / €0</p>
+            <p class="meta">Каталог, избранное, демо, бесплатные инструменты.</p>
+            <a class="btn" href="{% url 'main:tool_list' %}">Открыть каталог</a>
+        </article>
+
+        <article class="card">
+            <div class="tag">Для фрилансеров</div>
+            <h3>Starter</h3>
+            <p class="muted">Готовые промпты и мини-инструменты для регулярной личной работы.</p>
+            <p class="meta">Цена: $5 / 2 500 ₸ / 450 ₽ / €5 в месяц</p>
+            <p class="meta">8 доступов в месяц, обновления, базовая поддержка.</p>
+            <a class="btn" href="#plans">Выбрать</a>
+        </article>
+
+        <article class="card">
+            <div class="tag">Популярный</div>
+            <h3>Pro</h3>
+            <p class="muted">Для активных пользователей, которым нужен быстрый доступ к лучшим решениям.</p>
+            <p class="meta">Цена: $15 / 7 500 ₸ / 1 350 ₽ / €14 в месяц</p>
+            <p class="meta">25 доступов, premium-категории, приоритетные обновления.</p>
+            <a class="btn" href="#plans">Выбрать</a>
+        </article>
+
+        <article class="card">
+            <div class="tag">Для команд</div>
+            <h3>Business</h3>
+            <p class="muted">Для компаний, которым нужны роли, внедрение и кастомные AI-боты.</p>
+            <p class="meta">Цена: от $49 / 24 500 ₸ / 4 400 ₽ / €45 в месяц</p>
+            <p class="meta">Командный доступ, кастомизация, приоритетная поддержка.</p>
+            <a class="btn" href="{% url 'main:custom_bot_request' %}">Обсудить внедрение</a>
+        </article>
+    </div>
+</section>
+
+<section class="detail-panel" style="margin-top: 24px;">
+    <h2>Что входит</h2>
+    <div class="tools-grid">
+        <article class="card">
+            <h3>Free</h3>
+            <p class="meta">Просмотр каталога</p>
+            <p class="meta">Избранное</p>
+            <p class="meta">Демо и описания</p>
+        </article>
+        <article class="card">
+            <h3>Starter</h3>
+            <p class="meta">Все из Free</p>
+            <p class="meta">8 доступов в месяц</p>
+            <p class="meta">Готовые промпты и инструкции</p>
+        </article>
+        <article class="card">
+            <h3>Pro</h3>
+            <p class="meta">Все из Starter</p>
+            <p class="meta">25 доступов в месяц</p>
+            <p class="meta">Premium-категории и обновления</p>
+        </article>
+        <article class="card">
+            <h3>Business</h3>
+            <p class="meta">Командный доступ</p>
+            <p class="meta">Кастомные AI-боты</p>
+            <p class="meta">Помощь с внедрением</p>
+        </article>
+    </div>
+</section>
+
+<section class="detail-panel" style="margin-top: 24px;">
+    <h2>Для авторов</h2>
+    <p class="muted">Публикуйте свои AI-инструменты после модерации и получайте доход с продаж.</p>
+    <div class="tools-grid">
+        <article class="card">
+            <h3>Бесплатная заявка</h3>
+            <p class="meta">Автор отправляет заявку и описание инструмента.</p>
+            <a class="btn" href="{% url 'main:author_apply' %}">Стать автором</a>
+        </article>
+        <article class="card">
+            <h3>Модерация</h3>
+            <p class="meta">Админ проверяет качество, пользу и безопасность инструмента.</p>
+        </article>
+        <article class="card">
+            <h3>Revenue share</h3>
+            <p class="meta">Базовая схема: автор получает 70%, платформа удерживает 30%.</p>
+        </article>
+    </div>
+</section>
+
+<section id="plans" style="margin-top: 24px;">
+    <h2>Подключить подписку</h2>
+    <div class="tools-grid">
+    {% for plan in plans %}
+        <article class="card">
+            <h3>{{ plan.name }}</h3>
+            <p class="muted">{{ plan.description }}</p>
+            <p class="meta">Цена: {{ plan.display_price }} в месяц</p>
+            <a class="btn" href="{% url 'main:buy_plan' plan.slug %}">Подключить</a>
+        </article>
+    {% empty %}
+        <div class="empty">Добавьте тарифы в админке, чтобы открыть подписку.</div>
+    {% endfor %}
+    </div>
+</section>
+
+<section class="detail-panel" style="margin-top: 24px;">
+    <h2>FAQ</h2>
+    <p class="meta"><strong>Можно ли покупать инструменты разово?</strong> Да, карточки инструментов можно покупать отдельно.</p>
+    <p class="meta"><strong>В какой валюте списание?</strong> Сейчас базовая цена хранится в USD, остальные валюты показаны как ориентир для выбора тарифа.</p>
+    <p class="meta"><strong>Что происходит после оплаты?</strong> Доступ появляется в личном кабинете.</p>
+    <p class="meta"><strong>Как стать автором?</strong> Отправьте заявку, дождитесь принятия и добавьте инструмент на модерацию.</p>
+</section>
+{% endblock %}

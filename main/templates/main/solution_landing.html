@@ -1,0 +1,47 @@
+{% extends "main/base.html" %}
+
+{% block title %}AI для {{ category.name }}{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>{% if category.icon_emoji %}{{ category.icon_emoji }} {% endif %}AI для {{ category.name }}</h1>
+    <p class="subtitle">
+        {% if category.description %}
+            {{ category.description }}
+        {% else %}
+            SEO-страница для категории: подборка решений, которые ускоряют процессы и снижают ручную нагрузку.
+        {% endif %}
+    </p>
+    <form class="search-wrap" method="get">
+        <select name="sort">
+            <option value="featured" {% if selected_sort == "featured" %}selected{% endif %}>Сначала рекомендуемые</option>
+            <option value="new" {% if selected_sort == "new" %}selected{% endif %}>Сначала новые</option>
+            <option value="price_low" {% if selected_sort == "price_low" %}selected{% endif %}>Цена: по возрастанию</option>
+            <option value="price_high" {% if selected_sort == "price_high" %}selected{% endif %}>Цена: по убыванию</option>
+        </select>
+        <button type="submit">Применить</button>
+    </form>
+    {% if subcategories %}
+        <div class="search-wrap">
+            {% for subcategory in subcategories %}
+                <a class="btn" href="{% url 'main:solutions_landing' subcategory.slug %}">
+                    {% if subcategory.icon_emoji %}{{ subcategory.icon_emoji }} {% endif %}{{ subcategory.name }}
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+
+<section class="tools-grid">
+    {% for tool in tools %}
+        <article class="card">
+            <h3>{{ tool.title }}</h3>
+            <p class="muted">{{ tool.short_description }}</p>
+            <p class="meta">Экономия: {{ tool.time_saving_hours }} ч/нед</p>
+            <a class="btn" href="{% url 'main:tool_detail' tool.pk %}">Подробнее</a>
+        </article>
+    {% empty %}
+        <div class="empty">В этой категории пока нет инструментов.</div>
+    {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "main/base.html" %}
+
+{% block title %}Кастомный AI-бот{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Сделайте AI-бота под мой бизнес</h1>
+    <p class="subtitle">Оставьте заявку и получите предложение по внедрению AI-помощника под ваш процесс.</p>
+</section>
+
+<section class="detail-panel">
+    <form method="post" class="stack">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="row">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<small class="muted">{{ field.errors|striptags }}</small>{% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Отправить запрос</button>
+    </form>
+</section>
+{% endblock %}

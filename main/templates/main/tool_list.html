@@ -1,0 +1,121 @@
+{% extends "main/base.html" %}
+
+{% block title %}Каталог ИИ-ассистентов{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Каталог ИИ-ассистентов для бизнеса</h1>
+    <p class="subtitle">
+        Ищите готовые AI-промпты и инструменты для маркетинга, HR, продаж и операционных задач.
+        Выберите категорию, откройте карточку и получите готовый рабочий сценарий.
+    </p>
+
+    <form class="search-wrap" method="get">
+        <input type="text" name="q" placeholder="Например: копирайтер, резюме, email" value="{{ query }}">
+        <select name="category">
+            <option value="">Все категории</option>
+            {% for parent in parent_categories %}
+                <option value="{{ parent.slug }}" {% if selected_category and selected_category.id == parent.id %}selected{% endif %}>
+                    {% if parent.icon_emoji %}{{ parent.icon_emoji }} {% endif %}{{ parent.name }}
+                </option>
+                {% for category in categories %}
+                    {% if category.parent_id == parent.id %}
+                        <option value="{{ category.slug }}" {% if selected_category and selected_category.id == category.id %}selected{% endif %}>
+                            — {{ category.name }}
+                        </option>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </select>
+        <select name="audience">
+            <option value="">Любая роль</option>
+            {% for value, label in audience_choices %}
+                <option value="{{ value }}" {% if selected_audience == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <select name="difficulty">
+            <option value="">Любая сложность</option>
+            {% for value, label in difficulty_choices %}
+                <option value="{{ value }}" {% if selected_difficulty == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <select name="product_type">
+            <option value="">Любой формат</option>
+            {% for value, label in product_type_choices %}
+                <option value="{{ value }}" {% if selected_product_type == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <select name="sort">
+            <option value="new" {% if selected_sort == "new" %}selected{% endif %}>Сначала новые</option>
+            <option value="featured" {% if selected_sort == "featured" %}selected{% endif %}>Сначала рекомендуемые</option>
+            <option value="price_low" {% if selected_sort == "price_low" %}selected{% endif %}>Цена: по возрастанию</option>
+            <option value="price_high" {% if selected_sort == "price_high" %}selected{% endif %}>Цена: по убыванию</option>
+        </select>
+        <button type="submit">Найти</button>
+    </form>
+</section>
+
+{% if featured_tools %}
+<section>
+    <h2>Рекомендуемое</h2>
+    <div class="tools-grid">
+        <article class="card">
+            <div class="tag">Навигация</div>
+            <h3>Перейти на главную PromptBase</h3>
+            <p class="muted">Вернитесь на главную страницу с оффером, преимуществами и быстрыми CTA.</p>
+            <a class="btn" href="{% url 'main:home' %}">На главную</a>
+        </article>
+        {% for tool in featured_tools %}
+            <article class="card">
+                <div class="tag">Топ выбор</div>
+                <h3>{{ tool.title }}</h3>
+                <p class="muted">{{ tool.problem_solved|default:tool.short_description }}</p>
+                <p class="meta">Экономия: {{ tool.time_saving_hours }} ч/нед</p>
+                <a class="btn" href="{% url 'main:tool_detail' tool.pk %}">Смотреть</a>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section>
+    <h2>
+        {% if selected_category %}
+            Категория: {{ selected_category.name }}
+        {% else %}
+            Популярные инструменты
+        {% endif %}
+    </h2>
+
+    {% if tools %}
+        <div class="tools-grid">
+            {% for tool in tools %}
+                <article class="card">
+                    <div class="tag">{{ tool.category.name }}</div>
+                    <h3>{{ tool.title }}</h3>
+                    <p class="muted">{{ tool.short_description }}</p>
+                    <p class="meta">Для: {{ tool.get_audience_display }} | Сложность: {{ tool.get_difficulty_display }}</p>
+                    <p class="meta">Тип: {{ tool.get_product_type_display }}</p>
+                    <p class="meta">Экономит: {{ tool.time_saving_hours }} ч/нед | Запуск: {{ tool.setup_minutes }} мин</p>
+                    <p class="meta">Цена: ${{ tool.price_usd }}</p>
+                    <p class="meta">Добавлено: {{ tool.created_at|date:"d.m.Y" }}</p>
+                    <a class="btn" href="{% url 'main:tool_detail' tool.pk %}">Открыть</a>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty">По вашему запросу пока ничего не найдено.</div>
+    {% endif %}
+</section>
+
+<section style="margin-top: 24px;">
+    <h2>SEO-страницы по категориям</h2>
+    <div class="search-wrap">
+        {% for category in parent_categories %}
+            <a class="btn" href="{% url 'main:solutions_landing' category.slug %}">
+                {% if category.icon_emoji %}{{ category.icon_emoji }} {% endif %}AI для {{ category.name }} ({{ category.tools_count }})
+            </a>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
