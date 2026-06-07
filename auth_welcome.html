@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptBase — Вход</title>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --panel: #131b34;
+            --text: #f3f6ff;
+            --muted: #b5c0e5;
+            --accent: #6d8cff;
+            --accent-2: #8b5cf6;
+        }
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, Segoe UI, Arial, sans-serif;
+            background: radial-gradient(circle at top, #16224a, var(--bg));
+            color: var(--text);
+        }
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            border: 1px solid #2f3f70;
+            border-radius: 20px;
+            padding: 32px 28px;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+        }
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand-logo {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 14px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+        }
+        .brand h1 {
+            margin: 0 0 8px;
+            font-size: 26px;
+        }
+        .brand p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 22px;
+            background: var(--panel);
+            border-radius: 12px;
+            padding: 4px;
+        }
+        .tab {
+            border: 0;
+            background: transparent;
+            color: var(--muted);
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .tab.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+        }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .row {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            background: var(--panel);
+            border: 1px solid #31406f;
+            color: var(--text);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 15px;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .submit-btn {
+            width: 100%;
+            border: 0;
+            margin-top: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .error {
+            color: #ffb4b4;
+            font-size: 13px;
+        }
+        .notice {
+            margin-bottom: 14px;
+            padding: 10px 12px;
+            background: rgba(76, 175, 80, 0.18);
+            border: 1px solid rgba(76, 175, 80, 0.45);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        .hint {
+            margin-top: 18px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .switch-tab {
+            margin: 14px 0 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+        }
+        .link-btn {
+            border: 0;
+            background: none;
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="brand">
+                <div class="brand-logo">PB</div>
+                <h1>PromptBase</h1>
+                <p>Каталог AI-ассистентов для бизнеса.<br>Войдите или зарегистрируйтесь, чтобы открыть каталог.</p>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="notice">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="tabs">
+                <button type="button" class="tab {% if tab == 'login' %}active{% endif %}" data-tab="login">Вход</button>
+                <button type="button" class="tab {% if tab == 'signup' %}active{% endif %}" data-tab="signup">Регистрация</button>
+            </div>
+
+            <div class="panel {% if tab == 'login' %}active{% endif %}" id="panel-login">
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    <div class="row">
+                        <label for="id_username">Email или телефон</label>
+                        <input type="text" name="username" id="id_username" placeholder="name@example.com или +77001234567" required>
+                        {% if login_form.username.errors %}<span class="error">{{ login_form.username.errors|striptags }}</span>{% endif %}
+                    </div>
+                    <div class="row">
+                        <label for="id_password">Пароль</label>
+                        <input type="password" name="password" id="id_password" placeholder="Введите пароль" required>
+                        {% if login_form.password.errors %}<span class="error">{{ login_form.password.errors|striptags }}</span>{% endif %}
+                    </div>
+                    {% if login_form.non_field_errors %}
+                        <div class="error">{{ login_form.non_field_errors|striptags }}</div>
+                    {% endif %}
+                    <button type="submit" class="submit-btn">Войти</button>
+                    <p class="switch-tab">Нет аккаунта? <button type="button" class="link-btn" data-tab="signup">Зарегистрироваться</button></p>
+                </form>
+            </div>
+
+            <div class="panel {% if tab == 'signup' %}active{% endif %}" id="panel-signup">
+                <form method="post" action="{% url 'main:signup' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <label for="signup_username">Email или телефон</label>
+                        <input type="text" name="username" id="signup_username" placeholder="name@example.com или +77001234567" autocomplete="username" required>
+                        {% if signup_form.username.errors %}<span class="error">{{ signup_form.username.errors|striptags }}</span>{% endif %}
+                    </div>
+                    <div class="row">
+                        <label for="signup_password1">Пароль</label>
+                        <input type="password" name="password1" id="signup_password1" placeholder="Минимум 8 символов" autocomplete="new-password" required>
+                        {% if signup_form.password1.errors %}<span class="error">{{ signup_form.password1.errors|striptags }}</span>{% endif %}
+                    </div>
+                    <div class="row">
+                        <label for="signup_password2">Повторите пароль</label>
+                        <input type="password" name="password2" id="signup_password2" placeholder="Повторите пароль" autocomplete="new-password" required>
+                        {% if signup_form.password2.errors %}<span class="error">{{ signup_form.password2.errors|striptags }}</span>{% endif %}
+                    </div>
+                    {% if signup_form.non_field_errors %}
+                        <div class="error">{{ signup_form.non_field_errors|striptags }}</div>
+                    {% endif %}
+                    <button type="submit" class="submit-btn">Создать аккаунт</button>
+                    <p class="switch-tab">Уже есть аккаунт? <button type="button" class="link-btn" data-tab="login">Войти</button></p>
+                </form>
+            </div>
+
+            <p class="hint">Регистрация бесплатная. После входа откроется каталог и личный кабинет.</p>
+        </div>
+    </div>
+
+    <script>
+        const tabs = document.querySelectorAll(".tab");
+        const panels = document.querySelectorAll(".panel");
+
+        function switchTab(name) {
+            tabs.forEach((item) => item.classList.toggle("active", item.dataset.tab === name));
+            panels.forEach((panel) => panel.classList.toggle("active", panel.id === `panel-${name}`));
+            const url = new URL(window.location.href);
+            url.searchParams.set("tab", name);
+            window.history.replaceState({}, "", url);
+        }
+
+        tabs.forEach((tab) => {
+            tab.addEventListener("click", () => switchTab(tab.dataset.tab));
+        });
+
+        document.querySelectorAll(".link-btn[data-tab]").forEach((button) => {
+            button.addEventListener("click", () => switchTab(button.dataset.tab));
+        });
+    </script>
+</body>
+</html>
